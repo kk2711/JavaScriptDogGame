@@ -22,9 +22,11 @@ window.addEventListener('load', function(){
             this.enmeyInterval = 1000;
             this.enemyTimer = 0;
             this.player = new Player(this);
-            this.input = new InputHandler();
+            this.input = new InputHandler(this);
             this.player.currentState = this.player.states[0];
             this.player.currentState.enter();
+            this.debug = true;
+            this.score = 0;
             
         }
 
@@ -57,7 +59,7 @@ window.addEventListener('load', function(){
             if(this.gameSpeed > 0 && Math.random() < 0.5) this.enemies.push(new GroundEnemy(this));
             else if(this.gameSpeed > 0) this.enemies.push(new ClimingEnemy(this));
             this.enemies.push(new FlyingEnemy(this));
-            console.log(this.enemies);
+           
            
         }
 
