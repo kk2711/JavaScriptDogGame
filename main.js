@@ -2,7 +2,7 @@ import { Player } from './player.js';
 import { InputHandler } from './input.js';
 import { Background } from './background.js';
 import { ClimingEnemy, FlyingEnemy, GroundEnemy } from './enemy.js';
-
+import { UI } from './UI.js';
 
 window.addEventListener('load', function(){
     const canvas = document.getElementById('canvas1');
@@ -23,10 +23,12 @@ window.addEventListener('load', function(){
             this.enemyTimer = 0;
             this.player = new Player(this);
             this.input = new InputHandler(this);
+            this.ui = new UI(this);
             this.player.currentState = this.player.states[0];
             this.player.currentState.enter();
             this.debug = true;
             this.score = 0;
+            this.fontColor = 'black';
             
         }
 
@@ -53,6 +55,7 @@ window.addEventListener('load', function(){
                 enmey.draw(context);
             });
 
+            this.ui.draw(context);
         }
 
         addEnmey(){
