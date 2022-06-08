@@ -1,5 +1,5 @@
-import { Sitting, Running, Jumping, Falling, Rolling} from './playerStates.js';
-
+import { Sitting, Running, Jumping, Falling, Rolling, Diving, Hit } from './playerStates.js';
+import { CollisionAnimation } from './collisionAnimation.js';
 
 export class Player {
      
@@ -20,7 +20,7 @@ export class Player {
         this.fps = 20;
         this.frameInterval = 1000/this.fps;
         this.frameTimer = 0;
-        this.states = [new Sitting(this.game), new Running(this.game), new Jumping(this.game), new Falling(this.game), new Rolling(this.game)];
+        this.states = [new Sitting(this.game), new Running(this.game), new Jumping(this.game), new Falling(this.game), new Rolling(this.game), new Diving(this.game), new Hit(this.game)];
         
     }
 
@@ -32,6 +32,8 @@ export class Player {
         if (input.includes('ArrowRight')) this.speed = this.maxSpeed;
         else if (input.includes('ArrowLeft')) this.speed = - this.maxSpeed;
         else this.speed = 0;
+
+        // horizontal boundaries
         if (this.x < 0) this.x = 0;
         if (this.x > this.game.width - this.width) this.x = this.game.width - this.width;
     
@@ -40,6 +42,9 @@ export class Player {
         this.y += this.vy;
         if (!this.onGround()) this.vy += this.weight;
         else this.vy = 0;
+
+        // vertical boundary
+        if(this.y > this.game.height - this.height - this.game.groundMargin) this.y = this.game.height - this.height - this.game.groundMargin;
 
         //sprite animation
         if(this.frameTimer > this.frameInterval){
@@ -77,11 +82,14 @@ export class Player {
             ){
                 //collision detected
                 enemy.markedForDeletion = true;
-                this.game.score++;
+                this.game.collisions.push(new CollisionAnimation(this.game, enemy.x + enemy.width * 0.5, enemy.y + enemy.height * 0.5));
+               if(this.currentState === this.states[4] || this.currentState === this.states[5]){
+                    this.game.score++;
+               }else {
+                   this.setState(6, 0);
+               }
 
-            } else {
-                // no collision
-            }
+            } 
         });
     }
 
