@@ -7,7 +7,7 @@ import { UI } from './ui.js';
 window.addEventListener('load', function(){
     const canvas = document.getElementById('canvas1');
     const ctx = canvas.getContext('2d');
-    canvas.width =  500;
+    canvas.width =  900;
     canvas.height = 500;
     
     class Game{
@@ -24,15 +24,18 @@ window.addEventListener('load', function(){
             this.enemies = [];
             this.particles = [];
             this.collisions = [];
+            this.floatingMessages = [];
             this.maxParticles = 50;
             this.enemyTimer = 0;
             this.enemyInterval = 1000;
             this.debug = false;
             this.score = 0;
+            this.winningScore = 40;
             this.fontColor = 'black';
             this.time = 0;
-            this.maxTime = 6000;
+            this.maxTime = 30000;
             this.gameOver = false;
+            this.lives = 5;
             this.player.currentState = this.player.states[0];
             this.player.currentState.enter();
             
@@ -55,13 +58,17 @@ window.addEventListener('load', function(){
             
             this.enemies.forEach(enemy => {
                 enemy.update(deltaTime);
-                if(enemy.markedForDeletion) this.enemies.splice(this.enemies.indexOf(enemy), 1);
+                
             });
 
+            // handle messages
+            this.floatingMessages.forEach(message => {
+                message.update();
+            });
             // handle particles
             this.particles.forEach((particle, index) => {
                 particle.update();
-                if(particle.markedForDeletion) this.particles.splice(index, 1);
+               
             });
 
            if(this.particles.length > this.maxParticles){
@@ -72,8 +79,12 @@ window.addEventListener('load', function(){
            // handle collision sprites
            this.collisions.forEach((collision, index) => {
                 collision.update(deltaTime);
-                if(collision.markedForDeletion) this.collisions.splice(index, 1);
+               
            });
+           this.enemies = this.enemies.filter(enemy => !enemy.markedForDeletion);
+           this.particles = this.particles.filter(particle => !particle.markedForDeletion);
+           this.collisions = this.collisions.filter(collision => !collision.markedForDeletion);
+           this.floatingMessages = this.floatingMessages.filter(message => !message.markedForDeletion);
         }
 
        
@@ -93,6 +104,10 @@ window.addEventListener('load', function(){
                 collision.draw(context);
             });
 
+            this.floatingMessages.forEach(message => {
+                message.draw(context);
+            });
+
             this.UI.draw(context);
 
            
@@ -105,6 +120,7 @@ window.addEventListener('load', function(){
                 this.enemies.push(new ClimbingEnemy(this));
             }
             this.enemies.push(new FlyingEnemy(this));
+            //console.log(this.enemies, this.particles, this.collisions, this.floatingMessages);
             
         }
 

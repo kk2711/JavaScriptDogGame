@@ -3,6 +3,7 @@ export class UI{
         this.game = game;
         this.fontSize = 30;
         this.fontFamily = 'Helvetica';
+        this.liveImage = document.getElementById('live');
     }
 
     draw(context){
@@ -26,11 +27,15 @@ export class UI{
         context.font = this.fontSize * 0.8 + 'px ' + this.fontFamily;
         context.fillText('Time: ' + (this.game.time * 0.001).toFixed(1), 20, 80);
 
+        // lives
+        for(let i = 0; i < this.game.lives; i++){
+            context.drawImage(this.liveImage, 25 * i + 20, 95, 25, 25);
+        }
         // game over messages
         if(this.game.gameOver){
             context.textAlign = 'center';
             context.font = this.fontSize * 2 + 'px ' + this.fontFamily;
-            if(this.game.score > 5){
+            if(this.game.score > this.game.winningScore){
                 context.fillText('Boo-yah', this.game.width * 0.5, this.game.height * 0.5 - 20);
                 context.font = this.fontSize * 0.7 + 'px ' + this.fontFamily;
                 context.fillText('What are creatures of the night afraid of? YOU!!!', this.game.width * 0.5, this.game.height * 0.5 + 20);
